@@ -1,0 +1,90 @@
+# ---------------------------------------------------------------
+# Smart City Pollution Hotspot Detection - configuration
+# ---------------------------------------------------------------
+
+project:
+  name: "Smart City Pollution Hotspot Detection"
+  timezone: "Asia/Kolkata"
+
+# Historical window to ingest. end_date "auto" = yesterday. Weather comes from
+# the ERA5 archive, with the last ~6 days filled from the forecast API.
+ingestion:
+  start_date: "2025-10-01"
+  end_date: "auto"
+  # auto      -> OpenAQ if OPENAQ_API_KEY is set, else hybrid, else synthetic
+  # openaq    -> OpenAQ v3 ground stations (needs OPENAQ_API_KEY env var)
+  # hybrid    -> real Open-Meteo/CAMS background + real weather, downscaled to
+  #              each site with land-use emission factors (no key needed)
+  # openmeteo -> raw CAMS grid (~3 distinct cells over Mumbai/Thane)
+  # synthetic -> offline simulator (no internet needed)
+  source: "auto"
+  openaq_radius_m: 25000
+  request_timeout_s: 60
+
+pollutants: ["pm2_5", "pm10", "no2", "so2", "co", "o3"]
+weather_vars: ["temperature", "humidity", "wind_speed", "wind_direction", "precipitation", "pressure"]
+
+# Monitoring sites across Mumbai and Thane districts (approximate coordinates
+# of CPCB/MPCB stations and key urban zones).
+sites:
+  - {id: MUM01, name: "Colaba",            city: "Mumbai", lat: 18.9067, lon: 72.8147, zone: "coastal"}
+  - {id: MUM02, name: "Mazgaon",           city: "Mumbai", lat: 18.9650, lon: 72.8430, zone: "industrial"}
+  - {id: MUM03, name: "Worli",             city: "Mumbai", lat: 19.0176, lon: 72.8170, zone: "commercial"}
+  - {id: MUM04, name: "Sion",              city: "Mumbai", lat: 19.0390, lon: 72.8619, zone: "traffic"}
+  - {id: MUM05, name: "Bandra Kurla Complex", city: "Mumbai", lat: 19.0660, lon: 72.8680, zone: "commercial"}
+  - {id: MUM06, name: "Bandra",            city: "Mumbai", lat: 19.0596, lon: 72.8295, zone: "residential"}
+  - {id: MUM07, name: "Kurla",             city: "Mumbai", lat: 19.0726, lon: 72.8845, zone: "traffic"}
+  - {id: MUM08, name: "Chembur",           city: "Mumbai", lat: 19.0522, lon: 72.9005, zone: "industrial"}
+  - {id: MUM09, name: "Deonar",            city: "Mumbai", lat: 19.0500, lon: 72.9200, zone: "industrial"}
+  - {id: MUM10, name: "Vile Parle",        city: "Mumbai", lat: 19.0990, lon: 72.8440, zone: "traffic"}
+  - {id: MUM11, name: "Andheri",           city: "Mumbai", lat: 19.1197, lon: 72.8468, zone: "traffic"}
+  - {id: MUM12, name: "Powai",             city: "Mumbai", lat: 19.1176, lon: 72.9060, zone: "residential"}
+  - {id: MUM13, name: "Ghatkopar",         city: "Mumbai", lat: 19.0860, lon: 72.9080, zone: "residential"}
+  - {id: MUM14, name: "Malad",             city: "Mumbai", lat: 19.1874, lon: 72.8484, zone: "residential"}
+  - {id: MUM15, name: "Kandivali",         city: "Mumbai", lat: 19.2047, lon: 72.8526, zone: "residential"}
+  - {id: MUM16, name: "Borivali",          city: "Mumbai", lat: 19.2307, lon: 72.8567, zone: "green"}
+  - {id: MUM17, name: "Mulund",            city: "Mumbai", lat: 19.1726, lon: 72.9560, zone: "residential"}
+  - {id: MUM18, name: "Sewri",             city: "Mumbai", lat: 19.0000, lon: 72.8560, zone: "industrial"}
+  - {id: MUM19, name: "Navy Nagar",        city: "Mumbai", lat: 18.8940, lon: 72.8100, zone: "coastal"}
+  - {id: MUM20, name: "Mira Road",         city: "Mumbai", lat: 19.2813, lon: 72.8557, zone: "residential"}
+  - {id: THN01, name: "Thane Kolshet",     city: "Thane",  lat: 19.2290, lon: 72.9810, zone: "industrial"}
+  - {id: THN02, name: "Thane Wagle Estate", city: "Thane", lat: 19.2030, lon: 72.9580, zone: "industrial"}
+  - {id: THN03, name: "Thane Station",     city: "Thane",  lat: 19.1860, lon: 72.9750, zone: "traffic"}
+  - {id: THN04, name: "Ghodbunder Road",   city: "Thane",  lat: 19.2550, lon: 72.9690, zone: "traffic"}
+  - {id: THN05, name: "Kalwa",             city: "Thane",  lat: 19.2000, lon: 72.9990, zone: "residential"}
+  - {id: THN06, name: "Airoli",            city: "Thane",  lat: 19.1550, lon: 72.9990, zone: "industrial"}
+  - {id: THN07, name: "Vashi",             city: "Thane",  lat: 19.0771, lon: 72.9986, zone: "commercial"}
+  - {id: THN08, name: "Nerul",             city: "Thane",  lat: 19.0330, lon: 73.0190, zone: "residential"}
+  - {id: THN09, name: "Mahape MIDC",       city: "Thane",  lat: 19.1130, lon: 73.0280, zone: "industrial"}
+  - {id: THN10, name: "Dombivli MIDC",     city: "Thane",  lat: 19.2160, lon: 73.0860, zone: "industrial"}
+  - {id: THN11, name: "Kalyan",            city: "Thane",  lat: 19.2437, lon: 73.1355, zone: "traffic"}
+  - {id: THN12, name: "Ulhasnagar",        city: "Thane",  lat: 19.2215, lon: 73.1645, zone: "industrial"}
+  - {id: THN13, name: "Bhiwandi",          city: "Thane",  lat: 19.2967, lon: 73.0631, zone: "industrial"}
+  - {id: THN14, name: "Badlapur",          city: "Thane",  lat: 19.1550, lon: 73.2650, zone: "green"}
+
+clustering:
+  k_min: 3
+  k_max: 6
+  seed: 42
+
+prediction:
+  horizon_days: 7
+  test_fraction: 0.2
+  targets: ["pm2_5", "aqi"]
+  seed: 42
+
+spark:
+  app_name: "PollutionHotspotDetection"
+  master: "local[*]"
+  driver_memory: "4g"
+  shuffle_partitions: 16
+
+mongodb:
+  # Override with MONGO_URI env var
+  uri: "mongodb://localhost:27017"
+  database: "smart_city_pollution"
+
+paths:
+  raw: "data/raw"
+  processed: "data/processed"
+  models: "models"
